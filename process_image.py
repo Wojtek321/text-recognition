@@ -34,16 +34,22 @@ def predict_text_from_image(image_path, model, processor):
     return image, predicted_text
 
 
-def display_result(image, predicted_text):
+def display_result(image, predicted_text, result_path, image_name, save=False):
     plt.figure(figsize=(10, 5))
     plt.imshow(image)
     plt.axis('off')
     plt.title(f"Predicted text: {predicted_text}")
     plt.tight_layout()
+
+    if save:
+        result_image_path = os.path.join(result_path, f"{os.path.splitext(image_name)[0]}_result.png")
+        plt.savefig(result_image_path)
+
     plt.show()
+    plt.close()
 
 
-def process_images_in_folder(model_path, folder_path):
+def process_images_in_folder(model_path, folder_path, result_path):
     model, processor = load_model_and_processor(model_path)
 
     for image_name in os.listdir(folder_path):
@@ -53,15 +59,16 @@ def process_images_in_folder(model_path, folder_path):
             image, predicted_text = predict_text_from_image(image_path, model, processor)
 
             print(f"Predicted text for {image_name}: {predicted_text}")
-            display_result(image, predicted_text)
+            display_result(image, predicted_text, result_path, image_name, save=True)
 
 
 def main():
     # model_path = "czytacz/checkpoint-3000"
     model_path = "chincyk/czytacz"
-    folder_path = "test"
+    folder_path = "test_images"
+    result_path = "results"
 
-    process_images_in_folder(model_path, folder_path)
+    process_images_in_folder(model_path, folder_path, result_path)
 
 
 if __name__ == "__main__":
